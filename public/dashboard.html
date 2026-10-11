@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard Server Remote</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E8EDF1;--panel:#fff;--ink:#14213D;--mut:#5B6B80;--line:#D3DBE3;--ok:#14896F;--warn:#C97A0A;--bad:#C93A4E;--acc:#2F5BEA;--logbg:#14213D;--logtx:#CFE0F5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1724;--panel:#172033;--ink:#E6ECF5;--mut:#92A1B7;--line:#26324A;--ok:#3CC9A5;--warn:#F0A63A;--bad:#F06A7C;--acc:#7C9CFF;--logbg:#0B111C;--logtx:#B9CCE6}}
+:root[data-theme="dark"]{--bg:#0F1724;--panel:#172033;--ink:#E6ECF5;--mut:#92A1B7;--line:#26324A;--ok:#3CC9A5;--warn:#F0A63A;--bad:#F06A7C;--acc:#7C9CFF;--logbg:#0B111C;--logtx:#B9CCE6}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,system-ui,sans-serif}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh;max-width:1200px;margin:0 auto}
+aside{padding:20px 14px;border-right:1px solid var(--line)}
+aside h1{font-size:16px;font-weight:800;margin:0 8px 14px}
+.srv{display:flex;align-items:center;gap:10px;width:100%;padding:10px;border:0;border-radius:10px;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.srv:hover{background:var(--panel)}
+.srv.on{background:var(--panel);box-shadow:inset 3px 0 0 var(--acc)}
+.srv b{display:block;font-weight:600}
+.srv small{color:var(--mut)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+main{padding:22px;min-width:0}
+.head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.head h2{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.head p{margin:2px 0 0;color:var(--mut)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:600;color:#fff;margin-left:8px;vertical-align:middle}
+button.b{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:8px;font:600 13px Manrope,sans-serif;cursor:pointer}
+button.b:hover{border-color:var(--acc)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card .l{color:var(--mut);font-size:13px}
+.card .v{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.card .v small{font-size:14px;font-weight:600;color:var(--mut)}
+.card svg{display:block;width:100%;height:56px;margin-top:6px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin-top:18px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.two{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}
+h3{margin:0 0 10px;font-size:15px;font-weight:800}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row span:nth-child(2){flex:1}
+.row em{font-style:normal;color:var(--mut);font-size:13px}
+.log{background:var(--logbg);color:var(--logtx);border-radius:12px;padding:14px 16px}
+.log h3{color:var(--logtx)}
+.log pre{margin:0;font:12.5px/1.7 'JetBrains Mono',ui-monospace,monospace;max-height:250px;overflow:auto;white-space:pre-wrap}
+@media(max-width:760px){
+.app{grid-template-columns:1fr}
+aside{border-right:0;border-bottom:1px solid var(--line);padding:14px 10px}
+.list{display:flex;gap:6px;overflow-x:auto}
+.srv{width:auto;flex:none;border:1px solid var(--line)}
+main{padding:16px 14px}
+.two{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:no-preference){.bar i{transition:width .6s}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside><h1>Server saya</h1><div class="list" id="side"></div></aside>
+<main id="main"></main>
+</div>
+<script>
+const rnd=(a,b)=>a+Math.random()*(b-a),cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const N=40,mk=(b,s)=>Array.from({length:N},()=>cl(b+rnd(-s,s),2,98));
+const defs=[
+{n:'web-01',role:'Web & Nginx',ip:'103.22.14.8',loc:'Jakarta',cpu:34,mem:52,disk:61,net:40,up:41*3600+700,svc:['nginx','php-fpm','redis']},
+{n:'db-01',role:'Database MySQL',ip:'103.22.14.21',loc:'Jakarta',cpu:58,mem:74,disk:78,net:22,up:96*3600+3100,svc:['mysql','backup-agent']},
+{n:'billing-api',role:'API Tagihan',ip:'36.89.120.5',loc:'Bandung',cpu:82,mem:67,disk:44,net:55,up:7*3600+1800,svc:['node-api','pm2','nginx']},
+{n:'vpn-gw',role:'Gateway VPN',ip:'36.89.120.9',loc:'Surabaya',cpu:12,mem:31,disk:27,net:70,up:210*3600+500,svc:['wireguard','fail2ban']}];
+const S=defs.map(d=>({...d,c:mk(d.cpu,8),m:mk(d.mem,3),t:mk(d.net,15),st:Object.fromEntries(d.svc.map(x=>[x,1])),log:[]}));
+let sel=0,live=true;
+const col=v=>v>=85?'var(--bad)':v>=70?'var(--warn)':'var(--ok)';
+const lbl=v=>v>=85?'Kritis':v>=70?'Waspada':'Sehat';
+const T=()=>new Date().toLocaleTimeString('id-ID');
+const msgs=['GET /api/tagihan 200 12ms','GET /api/paket 200 9ms','POST /login 200 48ms','koneksi baru dari 114.5.2.{r}','cron: sinkronisasi selesai','POST /bayar 201 81ms','cache hit ratio 94%','GET /health 200 2ms'];
+function addLog(s,t){s.log.unshift('['+T()+'] '+t);s.log.length=Math.min(s.log.length,40)}
+S.forEach(s=>{for(let i=0;i<8;i++)addLog(s,msgs[i%msgs.length].replace('{r}',Math.floor(rnd(2,250))))});
+function sp(a,c,mx){const w=200,h=56,p=a.map((v,i)=>(i/(N-1)*w).toFixed(1)+','+(h-2-(v/mx)*(h-6)).toFixed(1)).join(' ');
+return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,${h} ${p} ${w},${h}" style="fill:${c};opacity:.15"/><polyline points="${p}" style="fill:none;stroke:${c};stroke-width:2" vector-effect="non-scaling-stroke"/></svg>`}
+const up=s=>{const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return (d?d+' hari ':'')+h+' jam '+m+' mnt'};
+const last=a=>a[a.length-1];
+function side(){document.getElementById('side').innerHTML=S.map((s,i)=>`<button class="srv ${i==sel?'on':''}" onclick="sel=${i};draw()"><span class="dot" style="background:${col(last(s.c))}"></span><span><b>${s.n}</b><small>CPU ${Math.round(last(s.c))}%</small></span></button>`).join('')}
+function draw(){side();const s=S[sel],c=last(s.c),m=last(s.m),t=last(s.t);
+const worst=Math.max(c,m,s.disk);
+document.getElementById('main').innerHTML=`
+<div class="head"><div><h2>${s.n}<span class="pill" style="background:${col(worst)}">${lbl(worst)}</span></h2><p>${s.role} · ${s.ip} · ${s.loc} · aktif ${up(s.up)}</p></div>
+<button class="b" onclick="live=!live;draw()">${live?'Jeda pembaruan':'Lanjutkan pembaruan'}</button></div>
+<div class="grid">
+<div class="card"><div class="l">Prosesor</div><div class="v">${c.toFixed(0)}<small>%</small></div>${sp(s.c,col(c),100)}</div>
+<div class="card"><div class="l">Memori</div><div class="v">${m.toFixed(0)}<small>%</small></div>${sp(s.m,col(m),100)}</div>
+<div class="card"><div class="l">Jaringan</div><div class="v">${t.toFixed(0)}<small> Mbps</small></div>${sp(s.t,'var(--acc)',100)}</div>
+<div class="card"><div class="l">Penyimpanan</div><div class="v">${s.disk.toFixed(0)}<small>% terpakai</small></div><div class="bar"><i style="width:${s.disk}%;background:${col(s.disk)}"></i></div></div>
+</div>
+<div class="two">
+<div class="card"><h3>Layanan</h3>${s.svc.map(x=>`<div class="row"><span class="dot" style="background:${s.st[x]?'var(--ok)':'var(--warn)'}"></span><span>${x}</span><em>${s.st[x]?'berjalan':'memulai ulang…'}</em><button class="b" onclick="restart('${x}')" ${s.st[x]?'':'disabled'}>Mulai ulang</button></div>`).join('')}</div>
+<div class="log"><h3>Log terbaru</h3><pre>${s.log.slice(0,14).join('\n')}</pre></div>
+</div>`}
+function restart(x){const s=S[sel];s.st[x]=0;addLog(s,'perintah: restart '+x);draw();setTimeout(()=>{s.st[x]=1;addLog(s,x+' berjalan normal');if(S[sel]===s)draw()},1800)}
+function tick(){if(!live)return;S.forEach(s=>{
+s.c.push(cl(last(s.c)+rnd(-7,7)+(s.cpu-last(s.c))*.1,3,99));s.c.shift();
+s.m.push(cl(last(s.m)+rnd(-1.5,1.5)+(s.mem-last(s.m))*.1,10,98));s.m.shift();
+s.t.push(cl(last(s.t)+rnd(-14,14)+(s.net-last(s.t))*.1,2,98));s.t.shift();
+s.disk=Math.min(99,s.disk+.004);s.up+=2;
+if(Math.random()<.6)addLog(s,msgs[Math.floor(rnd(0,msgs.length))].replace('{r}',Math.floor(rnd(2,250))))});draw()}
+draw();setInterval(tick,2000);
+</script>
+</body>
+</html>
