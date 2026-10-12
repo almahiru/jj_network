@@ -252,7 +252,7 @@ if (loginForm) {
       */
 
             setTimeout(function () {
-                window.location.href = "dashboard.html";
+                window.location.href = "public/dashboard.html";
             }, 500);
         } else {
             errorMessage.textContent = "Username atau password salah.";
