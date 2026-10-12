@@ -583,12 +583,13 @@
             ];
             let flt = "all";
             function chips() {
-                const c = [
-                    ["all", "<span class='dot'></span><b>8</b> perangkat"],
-                    ["router", "<b>2</b> router"],
-                    ["olt", "<b>2</b> OLT"],
-                    ["speed", "⏱️ Speedtest"]
-                ];
+                const n = g => D.filter(d => d.g === g).length;
+const c = [
+  ["all", "<span class='dot'></span><b>" + D.length + "</b> perangkat"],
+  ["router", "<b>" + n("ROUTER") + "</b> router"],
+  ["olt", "<b>" + n("OLT") + "</b> OLT"],
+  ["speed", "⏱️ Speedtest"]
+];
                 $("#chips").innerHTML = c
                     .map(
                         x =>
