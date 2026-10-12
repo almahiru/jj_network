@@ -698,7 +698,11 @@
                         `<h2>${d.ic} ${esc(d.n)}</h2><div class="row"><span class="mut">Status</span><span class="st ${d.on ? "" : "idle"}"><span class="dot ${d.on ? "" : "idle"}"></span>${d.on ? "Online" : "Idle"}</span></div><div class="row"><span class="mut">Alamat IP</span><b>${esc(d.ip)}</b></div><div class="row"><span class="mut">Uptime</span><b>${esc(d.up)}</b></div><div class="row"><span class="mut">Kelompok</span><b>${d.g}</b></div><button class="btn" id="rm">Buka remote</button><button class="btn sec" id="cx">Tutup</button>`
                     );
                     $("#rm").onclick = () => {
-                        window.open("http://" + d.ip, "http://id-18.hostddns.us:8143/#/status", "noopener");
+                        window.open(
+                            "http://" + d.ip,
+                            "http://id-18.hostddns.us:8143/#/status",
+                            "noopener"
+                        );
                     };
                 }
                 $("#cx").onclick = close;
