@@ -233,7 +233,7 @@ if (loginForm) {
     */
 
         const validUsername = "admin";
-        const validPassword = "glink123";
+        const validPassword = "jjnet";
 
         if (username === validUsername && password === validPassword) {
             loginButton.disabled = true;
