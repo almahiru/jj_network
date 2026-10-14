@@ -457,12 +457,12 @@
         <script>
             const $ = s => document.querySelector(s),
                 $$ = s => document.querySelectorAll(s);
-            const LOGIN = "index.html";
+            const LOGIN = "./index.html";
 
             // penjaga sesi: belum login -> kembali ke halaman login
             let user = null;
             try {
-                user = localStorage.getItem("glink_user");
+                user = localStorage.getItem("jjnet_user");
             } catch (e) {}
             if (!user) location.replace(LOGIN);
 
