@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        <title>JJ-Network • Dashboard</title>
+        <style>
+            :root {
+                --bg: #f2f7fa;
+                --card: #fff;
+                --line: #dce7ee;
+                --tx: #0b1b2b;
+                --mut: #62788c;
+                --ac: #0891b2;
+                --acbg: #e0f4f9;
+                --ok: #059669;
+                --okbg: #d1fae5;
+                --idle: #94a3b8;
+                --bad: #dc2626;
+                box-sizing: border-box;
+                padding-top: env(safe-area-inset-top, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                background: var(--bg);
+                color: var(--tx);
+                font:
+                    15px/1.45 system-ui,
+                    -apple-system,
+                    "Segoe UI",
+                    Roboto,
+                    sans-serif;
+            }
+            [hidden] {
+                display: none !important;
+            }
+            .wrap {
+                max-width: 480px;
+                margin: 0 auto;
+                min-height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            h2 {
+                font-size: 17px;
+                margin-bottom: 10px;
+            }
+            .mut {
+                color: var(--mut);
+            }
+            small {
+                font-size: 13px;
+            }
+            .card {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 18px;
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+            .btn {
+                background: var(--ac);
+                color: #fff;
+                border: 0;
+                border-radius: 12px;
+                padding: 13px 16px;
+                font: 600 15px inherit;
+                width: 100%;
+                cursor: pointer;
+            }
+            .btn.sec {
+                background: var(--card);
+                color: var(--tx);
+                border: 1px solid var(--line);
+            }
+            input {
+                width: 100%;
+                background: var(--card);
+                color: var(--tx);
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 13px;
+                font: 15px inherit;
+                margin: 6px 0 12px;
+            }
+            input:focus {
+                outline: 2px solid var(--ac);
+                border-color: transparent;
+            }
+            label {
+                font-size: 13px;
+                color: var(--mut);
+            }
+            .err {
+                color: var(--bad);
+                font-size: 13px;
+                min-height: 18px;
+                margin-bottom: 8px;
+            }
+            .logo {
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #06b6d4, #2563eb);
+                display: grid;
+                place-items: center;
+                font-size: 22px;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px;
+                border-bottom: 1px solid var(--line);
+                background: var(--card);
+            }
+            .brand {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+            .brand h1 {
+                font-size: 19px;
+            }
+            .brand h1 b {
+                color: var(--ac);
+            }
+            .brand small {
+                letter-spacing: 0.12em;
+                color: var(--mut);
+                font-size: 11px;
+            }
+            .x {
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                border: 1px solid var(--line);
+                background: var(--card);
+                color: var(--tx);
+                font-size: 18px;
+                cursor: pointer;
+            }
+            main {
+                flex: 1;
+                padding: 16px 16px 96px;
+            }
+            .chips {
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                margin-bottom: 12px;
+                scrollbar-width: none;
+            }
+            .chip {
+                flex: none;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 99px;
+                padding: 10px 16px;
+                font: 500 14px inherit;
+                color: var(--tx);
+                cursor: pointer;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+            .chip b {
+                font-size: 16px;
+            }
+            .chip.on {
+                background: var(--acbg);
+                border-color: var(--ac);
+                color: var(--ac);
+            }
+            .dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: var(--ok);
+                display: inline-block;
+            }
+            .dot.idle {
+                background: var(--idle);
+            }
+            .sec {
+                display: flex;
+                justify-content: space-between;
+                margin: 18px 2px 8px;
+                font-size: 13px;
+                color: var(--mut);
+            }
+            .sec b {
+                color: var(--tx);
+                font-size: 14px;
+                letter-spacing: 0.04em;
+            }
+            .dev {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 18px;
+                padding: 14px;
+                margin-bottom: 10px;
+                text-align: left;
+                color: var(--tx);
+                font: inherit;
+                cursor: pointer;
+            }
+            .ic {
+                flex: none;
+                width: 46px;
+                height: 46px;
+                border-radius: 14px;
+                background: var(--acbg);
+                display: grid;
+                place-items: center;
+                font-size: 22px;
+            }
+            .dev .nm {
+                flex: 1;
+                font-weight: 600;
+                min-width: 0;
+            }
+            .dev .nm small {
+                display: block;
+                font-weight: 400;
+                color: var(--mut);
+            }
+            .st {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--ok);
+                background: var(--okbg);
+                padding: 3px 10px;
+                border-radius: 99px;
+            }
+            .st.idle {
+                color: var(--mut);
+                background: #e8eef3;
+            }
+            .chev {
+                color: var(--mut);
+                font-size: 20px;
+            }
+            .empty {
+                text-align: center;
+                color: var(--mut);
+                padding: 24px;
+            }
+            .row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 0;
+                border-top: 1px solid var(--line);
+            }
+            .row:first-of-type {
+                border-top: 0;
+            }
+            nav {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--card);
+                border-top: 1px solid var(--line);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            nav div {
+                max-width: 480px;
+                margin: 0 auto;
+                display: flex;
+            }
+            nav button {
+                flex: 1;
+                background: none;
+                border: 0;
+                color: var(--mut);
+                padding: 10px 0;
+                font: 600 12px inherit;
+                cursor: pointer;
+            }
+            nav button b {
+                display: block;
+                font-size: 20px;
+                font-weight: 400;
+            }
+            nav button.on {
+                color: var(--ac);
+            }
+            .modal {
+                position: fixed;
+                inset: 0;
+                background: #0b1b2b66;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                z-index: 9;
+            }
+            .sheet {
+                background: var(--card);
+                width: 100%;
+                max-width: 480px;
+                border-radius: 22px 22px 0 0;
+                padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+                max-height: 85%;
+                overflow: auto;
+            }
+            .sheet .btn {
+                margin-top: 10px;
+            }
+            .big {
+                font-size: 34px;
+                font-weight: 700;
+                color: var(--ac);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <header>
+                <div class="brand">
+                    <div class="logo">📡</div>
+                    <div>
+                        <h1>JJ <b>Network</b></h1>
+                        <small>SYSTEM DASHBOARD</small>
+                    </div>
+                </div>
+                <button class="x" id="out" aria-label="Keluar">✕</button>
+            </header>
+
+            <main>
+                <div id="v-home">
+                    <div class="chips" id="chips"></div>
+                    <input
+                        id="q"
+                        placeholder="🔍  Cari perangkat atau lokasi..."
+                    />
+                    <div id="list"></div>
+                </div>
+
+                <div id="v-fitur" hidden>
+                    <div class="card">
+                        <h2>Fitur</h2>
+                        <div class="row">
+                            <span>Remote Router (MikroTik)</span
+                            ><span class="mut">Segera</span>
+                        </div>
+                        <div class="row">
+                            <span>Monitoring OLT / ONU</span
+                            ><span class="mut">Segera</span>
+                        </div>
+                        <div class="row">
+                            <span>Speedtest</span><span class="mut">Demo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="v-paket" hidden>
+                    <div class="card">
+                        <h2>Paket</h2>
+                        <div class="row">
+                            <span>Home 10 Mbps</span><b>Rp 110.000</b>
+                        </div>
+                        <div class="row">
+                            <span>Home 20 Mbps</span><b>Rp 150.000</b>
+                        </div>
+                        <div class="row">
+                            <span>Home 30 Mbps</span><b>Rp 200.000</b>
+                        </div>
+                        <div class="row">
+                            <span>Home 50 Mbps</span><b>Rp 300.000</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="v-aktivasi" hidden>
+                    <div class="card">
+                        <h2>Aktivasi</h2>
+                        <p class="mut">
+                            Aktivasi pelanggan baru dan ONU akan tersedia
+                            setelah dihubungkan ke server.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="v-about" hidden>
+                    <div class="card">
+                        <h2>About</h2>
+                        <div class="row">
+                            <span>Aplikasi</span><b>JJ_Network</b>
+                        </div>
+                        <div class="row">
+                            <span>Versi</span><b>1.0 (demo)</b>
+                        </div>
+                        <div class="row">
+                            <span>Login sebagai</span><b id="who">-</b>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Ganti user &amp; kata sandi</h2>
+                        <label for="nu">User baru</label>
+                        <input
+                            id="nu"
+                            placeholder="user baru"
+                            autocomplete="off"
+                        />
+                        <label for="np">Kata sandi baru</label>
+                        <input
+                            id="np"
+                            type="password"
+                            placeholder="sandi baru"
+                            autocomplete="new-password"
+                        />
+                        <div class="err" id="cmsg"></div>
+                        <button class="btn" id="saveCred">Simpan</button>
+                    </div>
+                </div>
+            </main>
+
+            <nav>
+                <div>
+                    <button data-go="home" class="on"><b>🏠</b>Home</button>
+                    <button data-go="fitur"><b>▦</b>Fitur</button>
+                    <button data-go="paket"><b>☰</b>Paket</button>
+                    <button data-go="aktivasi"><b>🛡️</b>Aktivasi</button>
+                    <button data-go="about"><b>👤</b>About</button>
+                </div>
+            </nav>
+        </div>
+
+        <div class="modal" id="modal" hidden>
+            <div class="sheet" id="sheet"></div>
+        </div>
+
+        <script>
+            const $ = s => document.querySelector(s),
+                $$ = s => document.querySelectorAll(s);
+            const LOGIN = "./index.html";
+
+            // penjaga sesi: belum login -> kembali ke halaman login
+            let user = null;
+            try {
+                user = localStorage.getItem("jjnet_user");
+            } catch (e) {}
+            if (!user) location.replace(LOGIN);
+
+            const esc = s =>
+                String(s).replace(
+                    /[&<>"']/g,
+                    c =>
+                        ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            '"': "&quot;",
+                            "'": "&#39;"
+                        })[c]
+                );
+
+            const D = [
+                {
+                    id: 1,
+                    g: "OLT",
+                    n: "OLT BABAT",
+                    ic: "🔀",
+                    on: 1,
+                    ip: "id-18.hostddns.us:8139",
+                    url: "http://id-18.hostddns.us:8139/#/status",
+                    up: "-"
+                },
+                {
+                    id: 2,
+                    g: "OLT",
+                    n: "OLT JEDUNG",
+                    ic: "🔀",
+                    on: 1,
+                    ip: "id-18.hostddns.us:8143",
+                    url: "http://id-18.hostddns.us:8143/#/status",
+                    up: "-"
+                },
+                {
+                    id: 3,
+                    g: "LAN",
+                    n: "Router LAN",
+                    sub: "192.168.1.1",
+                    ic: "🔀",
+                    on: 0,
+                    ip: "192.168.1.1",
+                    url: "https://192.168.1.1",
+                    up: "-"
+                },
+                {
+                    id: 4,
+                    g: "LAN",
+                    n: "Speedtest",
+                    sub: "speedtest",
+                    ic: "⏱️",
+                    on: 0,
+                    ip: "speedtest",
+                    up: "-",
+                    st: 1
+                }
+            ];
+            let flt = "all";
+
+            function chips() {
+                const n = g => D.filter(d => d.g === g).length;
+                const c = [
+                    [
+                        "all",
+                        "<span class='dot'></span><b>" +
+                            D.length +
+                            "</b> perangkat"
+                    ],
+                    ["router", "<b>" + n("ROUTER") + "</b> router"],
+                    ["olt", "<b>" + n("OLT") + "</b> OLT"],
+                    ["speed", "⏱️ Speedtest"]
+                ];
+                $("#chips").innerHTML = c
+                    .map(
+                        x =>
+                            `<button class="chip ${flt === x[0] ? "on" : ""}" data-f="${x[0]}">${x[1]}</button>`
+                    )
+                    .join("");
+            }
+
+            function list() {
+                const q = $("#q").value.trim().toLowerCase();
+                const items = D.filter(
+                    d =>
+                        (flt === "all" ||
+                            (flt === "router" && d.g === "ROUTER") ||
+                            (flt === "olt" && d.g === "OLT") ||
+                            (flt === "speed" && d.st)) &&
+                        (d.n + " " + (d.sub || "") + " " + d.ip)
+                            .toLowerCase()
+                            .includes(q)
+                );
+                let h = "";
+                ["ROUTER", "OLT", "SERVER", "LAN"].forEach(g => {
+                    const it = items.filter(d => d.g === g);
+                    if (!it.length) return;
+                    h +=
+                        `<div class="sec"><b>${g}</b><span>${it.length} perangkat</span></div>` +
+                        it
+                            .map(
+                                d =>
+                                    `<button class="dev" data-d="${d.id}"><div class="ic">${d.ic}</div><div class="nm">${esc(d.n)}${d.sub ? `<small>${esc(d.sub)}</small>` : ""}</div><span class="st ${d.on ? "" : "idle"}"><span class="dot ${d.on ? "" : "idle"}"></span>${d.on ? "Online" : "Idle"}</span><span class="chev">›</span></button>`
+                            )
+                            .join("");
+                });
+                $("#list").innerHTML =
+                    h || '<div class="empty">Perangkat tidak ditemukan.</div>';
+            }
+
+            function go(v) {
+                ["home", "fitur", "paket", "aktivasi", "about"].forEach(
+                    x => ($("#v-" + x).hidden = x !== v)
+                );
+                $$("nav button").forEach(b =>
+                    b.classList.toggle("on", b.dataset.go === v)
+                );
+                window.scrollTo(0, 0);
+            }
+
+            function openSheet(html) {
+                $("#sheet").innerHTML = html;
+                $("#modal").hidden = false;
+            }
+            function closeSheet() {
+                $("#modal").hidden = true;
+            }
+
+            // klik kartu: langsung ke URL perangkat; Speedtest membuka panel
+            function onDevice(d) {
+                if (d.url) {
+                    window.open(d.url, "_blank", "noopener");
+                    return;
+                }
+                if (!d.st) return;
+                openSheet(
+                    `<h2>⏱️ Speedtest</h2><div class="big" id="sp">- Mbps</div><p class="mut" id="sp2">Tekan mulai untuk tes kecepatan (demo).</p><button class="btn" id="go">Mulai tes</button><button class="btn sec" id="cx">Tutup</button>`
+                );
+                $("#go").onclick = () => {
+                    let n = 0;
+                    $("#sp2").textContent = "Mengukur...";
+                    const t = setInterval(() => {
+                        $("#sp").textContent =
+                            (10 + Math.random() * 40).toFixed(1) + " Mbps";
+                        if (++n > 12) {
+                            clearInterval(t);
+                            $("#sp2").textContent =
+                                "Selesai • ping " +
+                                (5 + Math.floor(Math.random() * 15)) +
+                                " ms";
+                        }
+                    }, 120);
+                };
+                $("#cx").onclick = closeSheet;
+            }
+
+            // ganti user & sandi
+            async function hx(s) {
+                try {
+                    const b = await crypto.subtle.digest(
+                        "SHA-256",
+                        new TextEncoder().encode("jjnet:" + s)
+                    );
+                    return [...new Uint8Array(b)]
+                        .map(x => x.toString(16).padStart(2, "0"))
+                        .join("");
+                } catch (e) {
+                    return "p:" + s;
+                }
+            }
+            $("#saveCred").onclick = async () => {
+                const u = $("#nu").value.trim(),
+                    p = $("#np").value,
+                    m = $("#cmsg");
+                if (u.length < 3 || p.length < 4) {
+                    m.style.color = "var(--bad)";
+                    m.textContent = "User min. 3 dan sandi min. 4 karakter.";
+                    return;
+                }
+                try {
+                    localStorage.setItem(
+                        "glink_cred",
+                        JSON.stringify({ u, h: await hx(p) })
+                    );
+                    localStorage.setItem("jjnet_user", u);
+                } catch (e) {}
+                $("#who").textContent = u;
+                $("#nu").value = "";
+                $("#np").value = "";
+                m.style.color = "var(--ok)";
+                m.textContent = "Tersimpan. Pakai ini saat login berikutnya.";
+            };
+
+            $("#out").onclick = () => {
+                try {
+                    localStorage.removeItem("jjnet_user");
+                } catch (e) {}
+                location.replace(LOGIN);
+            };
+            $("#q").addEventListener("input", list);
+            document.addEventListener("click", e => {
+                const g = e.target.closest("[data-go]");
+                if (g) go(g.dataset.go);
+                const f = e.target.closest("[data-f]");
+                if (f) {
+                    flt = f.dataset.f;
+                    chips();
+                    list();
+                }
+                const d = e.target.closest("[data-d]");
+                if (d) onDevice(D.find(x => x.id == d.dataset.d));
+                if (e.target.id === "modal") closeSheet();
+            });
+
+            $("#who").textContent = user || "-";
+            chips();
+            list();
+            go("home");
+        </script>
+    </body>
+</html>
