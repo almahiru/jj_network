@@ -171,7 +171,7 @@
             }
             async function cred() {
                 try {
-                    const c = JSON.parse(localStorage.getItem("glink_cred"));
+                    const c = JSON.parse(localStorage.getItem("jjnet_cred"));
                     if (c && c.u && c.h) return c;
                 } catch (e) {}
                 return { u: DEF.u, h: await hx(DEF.p) };
