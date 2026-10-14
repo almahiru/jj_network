@@ -148,19 +148,19 @@
 
         <script>
             const $ = s => document.querySelector(s);
-            const DASH = "dashboard.html";
-            const DEF = { u: "jjnetwork", p: "jjnetwork123" }; // user & sandi bawaan
+            const DASH = "public/dashboard.html";
+            const DEF = { u: "admin", p: "jjnetwork" }; // user & sandi bawaan
 
             // sudah login -> langsung ke dashboard
             try {
-                if (localStorage.getItem("glink_user")) location.replace(DASH);
+                if (localStorage.getItem("jjnet_user")) location.replace(DASH);
             } catch (e) {}
 
             async function hx(s) {
                 try {
                     const b = await crypto.subtle.digest(
                         "SHA-256",
-                        new TextEncoder().encode("glink:" + s)
+                        new TextEncoder().encode("jjnet:" + s)
                     );
                     return [...new Uint8Array(b)]
                         .map(x => x.toString(16).padStart(2, "0"))
@@ -186,7 +186,7 @@
                     return;
                 }
                 try {
-                    localStorage.setItem("glink_user", id);
+                    localStorage.setItem("jjnet_user", id);
                 } catch (e) {}
                 location.replace(DASH);
             });
