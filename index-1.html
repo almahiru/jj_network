@@ -1,1 +1,202 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        <title>JJ-Network • Login</title>
+        <style>
+            :root {
+                --bg: #f2f7fa;
+                --card: #fff;
+                --line: #dce7ee;
+                --tx: #0b1b2b;
+                --mut: #62788c;
+                --ac: #0891b2;
+                --bad: #dc2626;
+                box-sizing: border-box;
+                padding-top: env(safe-area-inset-top, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                background: var(--bg);
+                color: var(--tx);
+                font:
+                    15px/1.45 system-ui,
+                    -apple-system,
+                    "Segoe UI",
+                    Roboto,
+                    sans-serif;
+            }
+            .wrap {
+                max-width: 480px;
+                margin: 0 auto;
+                min-height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 24px;
+            }
+            .logo {
+                width: 64px;
+                height: 64px;
+                border-radius: 18px;
+                background: linear-gradient(135deg, #06b6d4, #2563eb);
+                display: grid;
+                place-items: center;
+                font-size: 30px;
+                margin-bottom: 16px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .mut {
+                color: var(--mut);
+            }
+            label {
+                font-size: 13px;
+                color: var(--mut);
+            }
+            input {
+                width: 100%;
+                background: var(--card);
+                color: var(--tx);
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 13px;
+                font: 15px inherit;
+                margin: 6px 0 12px;
+            }
+            input:focus {
+                outline: 2px solid var(--ac);
+                border-color: transparent;
+            }
+            .pw {
+                position: relative;
+            }
+            .pw button {
+                position: absolute;
+                right: 8px;
+                top: 12px;
+                background: none;
+                border: 0;
+                color: var(--mut);
+                padding: 6px;
+                font-size: 13px;
+            }
+            .err {
+                color: var(--bad);
+                font-size: 13px;
+                min-height: 18px;
+                margin-bottom: 8px;
+            }
+            .btn {
+                background: var(--ac);
+                color: #fff;
+                border: 0;
+                border-radius: 12px;
+                padding: 13px 16px;
+                font: 600 15px inherit;
+                width: 100%;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="logo">📡</div>
+            <h1>JJ-Network</h1>
+            <p class="mut" style="margin: 4px 0 24px">
+                Masuk untuk membuka System Dashboard.
+            </p>
+            <form id="fLogin">
+                <label for="uid">ID / Username</label>
+                <input
+                    id="uid"
+                    placeholder="Username/Id"
+                    autocomplete="username"
+                    required
+                />
+                <label for="pw">Kata sandi</label>
+                <div class="pw">
+                    <input
+                        id="pw"
+                        type="password"
+                        placeholder="••••••"
+                        autocomplete="current-password"
+                        required
+                    />
+                    <button type="button" id="eye">Lihat</button>
+                </div>
+                <div class="err" id="err"></div>
+                <button class="btn" type="submit">Masuk</button>
+            </form>
+            <p class="mut" style="margin-top: 16px; text-align: center">
+                <small>By : M Al Mahiru Jiddan</small>
+            </p>
+        </div>
+
+        <script>
+            const $ = s => document.querySelector(s);
+            const DASH = "dashboard.html";
+            const DEF = { u: "admin", p: "jjnet123" }; // user & sandi bawaan
+
+            // sudah login -> langsung ke dashboard
+            try {
+                if (localStorage.getItem("jjnet_user")) location.replace(DASH);
+            } catch (e) {}
+
+            async function hx(s) {
+                try {
+                    const b = await crypto.subtle.digest(
+                        "SHA-256",
+                        new TextEncoder().encode("jjnet:" + s)
+                    );
+                    return [...new Uint8Array(b)]
+                        .map(x => x.toString(16).padStart(2, "0"))
+                        .join("");
+                } catch (e) {
+                    return "p:" + s;
+                }
+            }
+            async function cred() {
+                try {
+                    const c = JSON.parse(localStorage.getItem("jjnet_cred"));
+                    if (c && c.u && c.h) return c;
+                } catch (e) {}
+                return { u: DEF.u, h: await hx(DEF.p) };
+            }
+            $("#fLogin").addEventListener("submit", async e => {
+                e.preventDefault();
+                const id = $("#uid").value.trim(),
+                    pw = $("#pw").value,
+                    c = await cred();
+                if (id !== c.u || (await hx(pw)) !== c.h) {
+                    $("#err").textContent = "User atau kata sandi salah.";
+                    return;
+                }
+                try {
+                    localStorage.setItem("jjnet_user", id);
+                } catch (e) {}
+                location.replace(DASH);
+            });
+            $("#eye").onclick = () => {
+                const i = $("#pw"),
+                    h = i.type === "password";
+                i.type = h ? "text" : "password";
+                $("#eye").textContent = h ? "Sembunyi" : "Lihat";
+            };
+        </script>
+    </body>
+</html>
 
